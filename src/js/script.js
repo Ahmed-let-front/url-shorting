@@ -110,11 +110,16 @@ const renderLinks = () => {
 
   const rows = state.links.map(({ original, short }) => {
     const row = document.getElementById('link-row').content.cloneNode(true);
+    const origEl = row.querySelector('.link-original');
     const shortEl = row.querySelector('.link-short');
 
-    row.querySelector('.link-original').textContent = original;
+    origEl.textContent = original;
+    origEl.href = original;
+    origEl.setAttribute('aria-label', `Original link: ${original}`);
+
     shortEl.textContent = short;
     shortEl.href = short;
+    shortEl.setAttribute('aria-label', `Shortened link: ${short}`);
 
     const copyBtn = row.querySelector('button');
     copyBtn.dataset.url = short;
@@ -123,7 +128,6 @@ const renderLinks = () => {
 
   elements.linksContainer.replaceChildren(...rows);
 };
-
 const saveLink = (original, short) => {
   state.links.unshift({ original, short });
   localStorage.setItem('shortly-links', JSON.stringify(state.links));
