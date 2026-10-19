@@ -72,11 +72,12 @@ const handleObservervUp = () => {
 const checkValidData = () => {
   if (!elements.urlInput.value.trim() || !elements.urlInput.checkValidity()) {
     elements.urlInput.setAttribute('aria-invalid', true);
-    elements.errorMsg.setAttribute('aria-hidden', false);
+    elements.errorMsg.textContent = 'Please add a valid link';
+    elements.urlInput.focus();
     return false;
   } else {
-    elements.errorMsg.setAttribute('aria-hidden', true);
     elements.urlInput.setAttribute('aria-invalid', false);
+    elements.errorMsg.textContent = '';
     return true;
   }
 };
