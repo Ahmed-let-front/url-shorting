@@ -137,3 +137,14 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .before-observer-up,
+  .hero-init-animateDown,
+  .hero-init-animateLeft,
+  .hero-init-animateRight {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    translate: none;
+  }
+}
