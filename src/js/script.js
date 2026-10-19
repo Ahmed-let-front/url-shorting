@@ -15,7 +15,7 @@ const elements = {
 const config = {
   TIMEOUT_SEC: 10,
   API_KEY_SHORTING:
-    'FRuiYacC8NNFBievGHwnfR0CRiY7HYSyupSheAUspUKNfAwFCmip2OXLMubD',
+    '3VJyfigaZiEGNJmTwE53AtU23exrvl66xXYY1lWIKK0PolOQCfrRPOT5wKo6',
   API_URL_SHORTING: 'https://api.t.ly/api/v1/link/shorten',
 };
 

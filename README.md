@@ -49,6 +49,12 @@ Welcome to the **URL Shorting Landing Page** web application, a modern, highly i
 
 ---
 
+## API & Backend Architecture Note
+
+> 💡 **Development Note:** I am fully aware that the API key for the URL shortening service is currently exposed directly in the frontend code. This was chosen temporarily for quick setup and deployment, and I plan to move this logic to a dedicated backend architecture to secure the API key away from the browser later when time permits.
+
+---
+
 ## Project Initialization & Local Setup
 
 To run this project locally, follow these steps:
