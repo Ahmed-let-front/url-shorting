@@ -9,8 +9,8 @@
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Frontend Mentor | Shortly URL shortening API landing page</title>
-    <script type="module" crossorigin src="/url-shorting/assets/index-BYScr4Ev.js"></script>
-    <link rel="stylesheet" crossorigin href="/url-shorting/assets/index-CoU8HHlo.css">
+    <script type="module" crossorigin src="/url-shorting/assets/index-D0BoOz08.js"></script>
+    <link rel="stylesheet" crossorigin href="/url-shorting/assets/index-TnGSf73L.css">
   </head>
   <body>
     <header
@@ -101,17 +101,15 @@
                 type="url"
                 required
                 aria-label="Link to shorten"
+                aria-describedby="error-msg"
                 placeholder="Shorten a link here..."
                 aria-invalid="false"
-                class="w-full rounded-md border-2 border-transparent peer bg-white px-6 py-3 text-md text-ink placeholder:text-grayish-violet aria-invalid:border-red aria-invalid:placeholder:text-red/60 md:py-3.5"
+                class="w-full rounded-md border-2 border-transparent bg-white px-6 py-3 text-md text-ink placeholder:text-grayish-violet aria-invalid:border-red aria-invalid:placeholder:text-red/60 md:py-3.5"
               />
               <p
                 id="error-msg"
-                aria-hidden="true"
-                class="absolute scale-0 pointer-events-none peer-aria-invalid:scale-100 peer-aria-invalid:pointer-events-auto -top-5 md:-top-6 left-0 text-xs italic text-red md:-bottom-6 md:text-sm"
-              >
-                Please add a vaild link
-              </p>
+                class="absolute -top-5 md:-top-6 left-0 text-xs italic text-red md:-bottom-6 md:text-sm"
+              ></p>
             </div>
             <button
               type="submit"
