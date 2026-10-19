@@ -29,6 +29,30 @@
   body {
     @apply overflow-x-hidden bg-white font-medium text-ink antialiased;
   }
+  /* Custom Scrollbar using theme variables */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-surface);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-cyan);
+    border-radius: 9999px;
+    border: 2px solid var(--color-surface);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-cyan-light);
+  }
+
+  /* Firefox Scrollbar Support */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-cyan) var(--color-surface);
+  }
 }
 
 @layer components {

@@ -3,11 +3,8 @@ const elements = {
   urlInput: document.getElementById('urlInput'),
   btnSubmitShortForm: document.getElementById('btn-submit-short-form'),
   errorMsg: document.getElementById('error-msg'),
-  shortlLinkEl: document.getElementById('short-link'),
-  originalLinkEl: document.getElementById('original-link'),
-  shortenedLinksContainer: document.getElementById('shortened-links-container'),
+  linksContainer: document.getElementById('links'),
   notificationsList: document.getElementById('notifications-list'),
-  copyBtn: document.getElementById('copyBtn'),
   fakeLinkDialog: document.getElementById('fake-link-dialog'),
   allObservElements: document.querySelectorAll('.before-observer-up'),
 };
@@ -22,6 +19,7 @@ const config = {
 const state = {
   shortUrl: '',
   originalURL: '',
+  links: JSON.parse(localStorage.getItem('shortly-links') ?? '[]'),
 };
 
 const timeout = s => {
@@ -33,6 +31,7 @@ const timeout = s => {
     }, 1000 * s);
   });
 };
+
 const AJAX = async (apiUrl, longURL) => {
   const fetchPro = longURL
     ? fetch(apiUrl, {
@@ -52,6 +51,7 @@ const AJAX = async (apiUrl, longURL) => {
   const data = await res.json();
   return data;
 };
+
 const handleObservervUp = () => {
   const options = {
     root: null,
@@ -69,6 +69,7 @@ const handleObservervUp = () => {
   const observer = new IntersectionObserver(callBack, options);
   elements.allObservElements.forEach(el => observer.observe(el));
 };
+
 const checkValidData = () => {
   if (!elements.urlInput.value.trim() || !elements.urlInput.checkValidity()) {
     elements.urlInput.setAttribute('aria-invalid', true);
@@ -81,6 +82,7 @@ const checkValidData = () => {
     return true;
   }
 };
+
 const showSpinner = () => {
   const markup = `
     <div
@@ -89,33 +91,49 @@ const showSpinner = () => {
     `;
   elements.btnSubmitShortForm.innerHTML = markup;
 };
+
 const hiddenSpinner = () => {
   elements.btnSubmitShortForm.innerHTML = 'Shorten It!';
 };
+
 const shortenUrl = async longURL => {
   showSpinner();
   const data = await AJAX(config.API_URL_SHORTING, longURL);
-  const shortUrlFromData = data.short_url;
-  const originalUrlFromData = data.long_url;
-  state.shortUrl = shortUrlFromData;
-  state.originalURL = originalUrlFromData;
+  return {
+    short: data.short_url,
+    original: data.long_url,
+  };
 };
-const hiddenShortURLContainer = () => {
-  elements.shortenedLinksContainer.inert = true;
+
+const renderLinks = () => {
+  if (!elements.linksContainer) return;
+
+  const rows = state.links.map(({ original, short }) => {
+    const row = document.getElementById('link-row').content.cloneNode(true);
+    const shortEl = row.querySelector('.link-short');
+
+    row.querySelector('.link-original').textContent = original;
+    shortEl.textContent = short;
+    shortEl.href = short;
+
+    const copyBtn = row.querySelector('button');
+    copyBtn.dataset.url = short;
+    return row;
+  });
+
+  elements.linksContainer.replaceChildren(...rows);
 };
-const showShortURLContainer = () => {
-  elements.shortenedLinksContainer.inert = false;
+
+const saveLink = (original, short) => {
+  state.links.unshift({ original, short });
+  localStorage.setItem('shortly-links', JSON.stringify(state.links));
+  renderLinks();
 };
-const updateShortUrlEl = () => {
-  showShortURLContainer();
-  elements.shortlLinkEl.textContent = state.shortUrl;
-  elements.originalLinkEl.textContent = state.originalURL;
-  elements.shortlLinkEl.href = state.shortUrl;
-  elements.originalLinkEl.href = state.originalURL;
-};
+
 const clearInput = () => {
   elements.urlInput.value = '';
 };
+
 const showPopup = (sign, msg) => {
   const li = document.createElement('li');
   li.setAttribute('role', 'status');
@@ -128,6 +146,7 @@ const showPopup = (sign, msg) => {
   elements.notificationsList.append(li);
   closePopup(li);
 };
+
 const closePopup = liEl => {
   setTimeout(() => {
     liEl.classList.remove('translate-x-0', 'opacity-100');
@@ -137,16 +156,16 @@ const closePopup = liEl => {
     }, 500);
   }, 4500);
 };
+
 const handleShortenForm = async () => {
   elements.shortenForm.addEventListener('submit', async e => {
     e.preventDefault();
     if (!checkValidData()) return;
-    hiddenShortURLContainer();
     try {
       const longURL = e.currentTarget.querySelector('input').value;
-      await shortenUrl(longURL);
+      const { original, short } = await shortenUrl(longURL);
       clearInput();
-      updateShortUrlEl();
+      saveLink(original, short);
       showPopup('✔', 'URL shortening operation completed');
     } catch (err) {
       showPopup('✖', err.message);
@@ -155,23 +174,30 @@ const handleShortenForm = async () => {
     }
   });
 };
-const copyToClipboard = async textToCopy => {
+
+const copyToClipboard = async (textToCopy, btnEl) => {
   if (!textToCopy) {
     showPopup('✖', 'No URL to copy!');
     return;
   }
   try {
     await navigator.clipboard.writeText(textToCopy);
+    btnEl.dataset.copied = 'true';
+    btnEl.textContent = 'Copied!';
     showPopup('✔', 'Copied to clipboard!');
   } catch (err) {
     showPopup('✖', err.message);
   }
 };
-const handleCopyBtn = () => {
-  elements.copyBtn.addEventListener('click', () =>
-    copyToClipboard(state.shortUrl),
-  );
+
+const handleCopyList = () => {
+  elements.linksContainer.addEventListener('click', e => {
+    const copyBtn = e.target.closest('button[data-url]');
+    if (!copyBtn) return;
+    copyToClipboard(copyBtn.dataset.url, copyBtn);
+  });
 };
+
 const handleDialogFakeLink = () => {
   document.addEventListener('click', e => {
     const btn = e.target.closest('.demo-btn');
@@ -180,10 +206,13 @@ const handleDialogFakeLink = () => {
     elements.fakeLinkDialog.showPopover();
   });
 };
+
 const init = () => {
   handleObservervUp();
-  handleCopyBtn();
+  renderLinks();
+  handleCopyList();
   handleShortenForm();
   handleDialogFakeLink();
 };
+
 init();
